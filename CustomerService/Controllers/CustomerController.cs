@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace CustomerService.Controllers
 {
@@ -51,7 +52,20 @@ namespace CustomerService.Controllers
 
             var customers = NorthwindContext.Set<Customer>();
 
-            await customers.AddAsync(customer);
+            Customer customerJson = new Customer();
+
+            customerJson.Address = "123";
+            customerJson.CompanyName = "Alder's";
+            customerJson.ContactName = "Alder";
+            customerJson.CustomerID = "EDCBB";
+            customerJson.Country = "Mexico";
+
+            string output = JsonConvert.SerializeObject(customerJson);
+
+
+            //Customer deserializedCustomer = JsonConvert.DeserializeObject<Customer>(output);
+
+            await customers.AddAsync(customerJson);
 
             NorthwindContext.SaveChanges();
 

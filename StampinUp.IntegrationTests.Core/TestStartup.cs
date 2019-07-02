@@ -6,8 +6,7 @@ namespace StampinUp.Core.IntegrationTests
 {
     
 
-    namespace StampinUp.Testing.IntegrationTests
-    {
+    
         [SetUpFixture]
         public class TestStartup
         {
@@ -18,4 +17,4 @@ namespace StampinUp.Core.IntegrationTests
             }
         }
     }
-}
+
