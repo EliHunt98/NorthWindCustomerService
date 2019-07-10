@@ -30,8 +30,6 @@ namespace CustomerService.Controllers
             this.Customers = Customers;
         }
 
-        
-
 
         [HttpGet("{Country}")]
         public async Task<ActionResult<List<Customer>>> GetCustomer(string Country)
@@ -49,12 +47,12 @@ namespace CustomerService.Controllers
         [HttpPost("")]
         public async Task<ActionResult<HttpStatusCode>> CreateCustomer([FromBody] Customer customer)
         {
-
+            
             var customers = NorthwindContext.Set<Customer>();
 
             Customer customerJson = new Customer();
 
-            customerJson.CustomerID = System.Guid.NewGuid().ToString().Substring(0,5);
+            customerJson.CustomerID = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.CustomerID;
             customerJson.CompanyName = "Alder's";
             customerJson.ContactName = "Alder";
             customerJson.Country = "Mexico";
@@ -82,9 +80,9 @@ namespace CustomerService.Controllers
                                     where customer.CustomerID == customerID
                                     select customer).FirstOrDefault();
 
-            customerToChange.CompanyName = System.Guid.NewGuid().ToString().Substring(0, 25); 
-            customerToChange.ContactName = System.Guid.NewGuid().ToString().Substring(0, 25);
-            customerToChange.Country = System.Guid.NewGuid().ToString().Substring(0, 25);
+            customerToChange.CompanyName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.CustomerID;
+            customerToChange.ContactName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.ContactName;
+            customerToChange.Country = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.Country;
 
             NorthwindContext.Update(customerToChange);
             NorthwindContext.SaveChanges();

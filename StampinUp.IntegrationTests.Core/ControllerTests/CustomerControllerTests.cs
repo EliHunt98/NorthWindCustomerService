@@ -8,9 +8,11 @@ using NUnit.Framework;
 using StampinUp.Core.IntegrationTests;
 using StampinUp.Core.Testing.Web;
 using StampinUp.Core.Testing.Web.Contracts;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Linq;
 
 namespace CustomerServiceTests
 {
@@ -46,15 +48,15 @@ namespace CustomerServiceTests
 
 
         [Test]
-        [TestCase("POIOI", "Berry's Place", "Berry Thomas", "Mexico")]
-        public void CustomerController_CreateCustomer_Success(string CustomerID, string CompanyName, string ContactName, string Country)
+        [TestCase("Berry's Place", "Berry Thomas", "Mexico")]
+        public void CustomerController_CreateCustomer_Success( string CompanyName, string ContactName, string Country)
         {
 
             WebTestManager.HttpClient.UsingTestServiceClient(httpClient =>
             {
                 Customer req = new Customer
                 {
-                    CustomerID = CustomerID,
+                    CustomerID = System.Guid.NewGuid().ToString().Substring(0, 5),
                     CompanyName = CompanyName,
                     ContactName = ContactName,
                     Country = Country
@@ -63,21 +65,21 @@ namespace CustomerServiceTests
                 StringContent postContent = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = httpClient.PostAsync($"{baseUri}", postContent).Result;
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
             });
         }
 
 
 
         [Test]
-        [TestCase("POIOO", "Berry's Place", "Claire Thomas", "Mexico")]
-        public void CustomerController_DeleteCustomer_Success(string CustomerID, string CompanyName, string ContactName, string Country)
+        [TestCase("Berry's Place", "Claire Thomas", "Mexico")]
+        public void CustomerController_DeleteCustomer_Success(string CompanyName, string ContactName, string Country)
         {
-
             WebTestManager.HttpClient.UsingTestServiceClient(httpClient =>
             {
                 Customer req = new Customer
                 {
-                    CustomerID = CustomerID,
+                    CustomerID = System.Guid.NewGuid().ToString().Substring(0, 5),
                     CompanyName = CompanyName,
                     ContactName = ContactName,
                     Country = Country
@@ -85,22 +87,23 @@ namespace CustomerServiceTests
 
                 StringContent postContent = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 HttpResponseMessage postResponse = httpClient.PostAsync($"{baseUri}", postContent).Result;
-                HttpResponseMessage delResponse = httpClient.DeleteAsync($"{baseUri}/{CustomerID}").Result;
                 Assert.AreEqual(HttpStatusCode.OK, postResponse.StatusCode);
-                Assert.AreEqual(HttpStatusCode.OK, delResponse);
+               
+                HttpResponseMessage delResponse = httpClient.DeleteAsync($"{baseUri}/{req.CustomerID}").Result;
+                Assert.AreEqual(HttpStatusCode.OK, delResponse.StatusCode);
             });
         }
 
         [Test]
-        [TestCase("POIII", "Berry's Place", "Claire Thomas", "Mexico", "Mark's")]
-        public void CustomerController_UpdateCustomer_Success(string CustomerID, string CompanyName, string ContactName, string Country, string newCompanyName)
+        [TestCase("Berry's Place", "Claire Thomas", "Mexico", "Mark's")]
+        public void CustomerController_UpdateCustomer_Success(string CompanyName, string ContactName, string Country, string newCompanyName)
         {
 
             WebTestManager.HttpClient.UsingTestServiceClient(httpClient =>
             {
                 Customer req = new Customer
                 {
-                    CustomerID = CustomerID,
+                    CustomerID = System.Guid.NewGuid().ToString().Substring(0, 5),
                     CompanyName = CompanyName,
                     ContactName = ContactName,
                     Country = Country
@@ -112,9 +115,11 @@ namespace CustomerServiceTests
 
                 req.CompanyName = newCompanyName;
                 StringContent putContent = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-                HttpResponseMessage putResponse = httpClient.PutAsync($"{baseUri}/{CustomerID}", putContent).Result;
-                
-                Assert.AreEqual(HttpStatusCode.OK, putResponse);
+                HttpResponseMessage putResponse = httpClient.PutAsync($"{baseUri}/{req.CustomerID}", putContent).Result;
+                Assert.AreEqual(HttpStatusCode.OK, putResponse.StatusCode);
+
+                HttpResponseMessage delResponse = httpClient.DeleteAsync($"{baseUri}/{req.CustomerID}").Result;
+                Assert.AreEqual(HttpStatusCode.OK, delResponse.StatusCode);
             });
         }
     }
