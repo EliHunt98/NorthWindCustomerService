@@ -13,9 +13,9 @@ using Newtonsoft.Json;
 
 namespace CustomerService.Controllers
 {
-
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    
 
     public class CustomerController
     {
@@ -54,41 +54,42 @@ namespace CustomerService.Controllers
 
             Customer customerJson = new Customer();
 
-            customerJson.Address = "123";
+            customerJson.CustomerID = System.Guid.NewGuid().ToString().Substring(0,5);
             customerJson.CompanyName = "Alder's";
             customerJson.ContactName = "Alder";
-            customerJson.CustomerID = "EDCBB";
             customerJson.Country = "Mexico";
-
+            //customerJson.Address = "123";
+            
             string output = JsonConvert.SerializeObject(customerJson);
 
 
-            //Customer deserializedCustomer = JsonConvert.DeserializeObject<Customer>(output);
+            Customer deserializedCustomer = JsonConvert.DeserializeObject<Customer>(output);
 
             await customers.AddAsync(customerJson);
 
             NorthwindContext.SaveChanges();
 
-            return HttpStatusCode.OK;
+            return HttpStatusCode.OK; 
 
+            
 
         }
 
         [HttpPut("{customerID}")]
-        public async Task<ActionResult<Customer>> UpdateCustomer([FromBody] Customer customer, string customerID)
+        public async Task<ActionResult<HttpStatusCode>> UpdateCustomer([FromBody] Customer customer, string customerID)
         {
             var customerToChange = (from cust in NorthwindContext.Customers
                                     where customer.CustomerID == customerID
                                     select customer).FirstOrDefault();
 
-            customerToChange.CompanyName = "Joes Noodles";
-            customerToChange.ContactName = "Joe";
-            customerToChange.Country = "Mexico";
+            customerToChange.CompanyName = System.Guid.NewGuid().ToString().Substring(0, 25); 
+            customerToChange.ContactName = System.Guid.NewGuid().ToString().Substring(0, 25);
+            customerToChange.Country = System.Guid.NewGuid().ToString().Substring(0, 25);
 
             NorthwindContext.Update(customerToChange);
             NorthwindContext.SaveChanges();
 
-            return customerToChange;
+            return HttpStatusCode.OK;
         }
 
         [HttpDelete("{customerID}")]

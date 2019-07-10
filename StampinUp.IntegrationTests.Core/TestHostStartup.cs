@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CustomerService;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StampinUp.Core.AspNetCore.WebHosting;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace StampinUp.Core.IntegrationTests
 {
-    class TestHostStartup : CoreStartup
+    class TestHostStartup : Startup
     {
         
         private readonly IConfiguration configuration;
