@@ -17,12 +17,9 @@ using System.Linq;
 namespace CustomerServiceTests
 {
     [TestFixture, Category("CustomerController")]
-    public class CustomerControllerTests
+    public class CustomerControllerTests 
     {
-
         private readonly string baseUri = "api/Customer";
-
-        
 
         [OneTimeSetUp]
         public void SetUp()
@@ -38,20 +35,14 @@ namespace CustomerServiceTests
         public void CustomerController_GetCustomer_Success(string Country)
         {
             string getUri = $"{baseUri}/{Country}";
-            
-            TestHttpResponse testHttpResponse = WebTestManager.HttpClient.GET(getUri).Result; 
-
+            TestHttpResponse testHttpResponse = WebTestManager.HttpClient.GET(getUri).Result;
             Assert.AreEqual(HttpStatusCode.OK, testHttpResponse.StatusCode);
         }
-
-        
-
 
         [Test]
         [TestCase("Berry's Place", "Berry Thomas", "Mexico")]
         public void CustomerController_CreateCustomer_Success( string CompanyName, string ContactName, string Country)
         {
-
             WebTestManager.HttpClient.UsingTestServiceClient(httpClient =>
             {
                 Customer req = new Customer
@@ -65,11 +56,8 @@ namespace CustomerServiceTests
                 StringContent postContent = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = httpClient.PostAsync($"{baseUri}", postContent).Result;
                 Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-
             });
         }
-
-
 
         [Test]
         [TestCase("Berry's Place", "Claire Thomas", "Mexico")]
@@ -98,7 +86,6 @@ namespace CustomerServiceTests
         [TestCase("Berry's Place", "Claire Thomas", "Mexico", "Mark's")]
         public void CustomerController_UpdateCustomer_Success(string CompanyName, string ContactName, string Country, string newCompanyName)
         {
-
             WebTestManager.HttpClient.UsingTestServiceClient(httpClient =>
             {
                 Customer req = new Customer
@@ -118,10 +105,9 @@ namespace CustomerServiceTests
                 HttpResponseMessage putResponse = httpClient.PutAsync($"{baseUri}/{req.CustomerID}", putContent).Result;
                 Assert.AreEqual(HttpStatusCode.OK, putResponse.StatusCode);
 
-                HttpResponseMessage delResponse = httpClient.DeleteAsync($"{baseUri}/{req.CustomerID}").Result;
-                Assert.AreEqual(HttpStatusCode.OK, delResponse.StatusCode);
             });
         }
+
     }
 
 

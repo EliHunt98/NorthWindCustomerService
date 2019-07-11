@@ -9,12 +9,8 @@ namespace CustomerService.Classes
 {
 
     [JsonObject]
-    public class Customer
+    public class Customer : ICustomer
     {
-
-        //Could you convert this to a json object and use that to post information?
-
-
         
         [JsonProperty("CustomerID")]
         public string CustomerID { get; set; }

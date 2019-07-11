@@ -26,14 +26,4 @@ namespace CustomerService
 
     }
 
-    public class classTest : eli
-    {
-
-
-
-    }
-    public interface eli
-    {
-
-    }
 }

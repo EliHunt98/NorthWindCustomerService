@@ -1,6 +1,7 @@
 ﻿using CustomerService;
 using CustomerService.Classes;
 using CustomerService.Controllers;
+using CustomerService.Providers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -12,58 +13,48 @@ using System.Text;
 
 namespace StampinUp.Core.IntegrationTests.UnitTests
 {
-    //[TestFixture, Category("CustomerUnitTests")]
-    //class CustomerControllerUnitTests
-    //{
-    //    Mock<NorthwindContext> northwindContext;
-    //    Mock<Customer> customer;
-    //    Mock<CustomerController> customerController;
+    [TestFixture, Category("CustomerUnitTests")]
+    class CustomerControllerUnitTests
+    {
+        Mock<NorthwindContext> northwindContext;
+        Mock<Customer> customer;
+        Mock<ICustomerProvider> customerProvider;
 
-    //    [SetUp]
-    //    public void SetUp()
-    //    {
-    //        northwindContext = new Mock<NorthwindContext>();
-    //        customer = new Mock<Customer>();
-    //        customerController = new Mock<CustomerController>();
-    //    }
-
-    //    [TestCase("ABCUI", "Mexico", "McDonduls", "Tom Erics")]
-    //    public void CustomerController_CreateCustomer_Success(string CustomerID, string Country, string CompanyName, string ContactName)
-    //    {
-    //        customerController.Setup(c => c.CreateCustomer(It.IsAny<Customer>()))
-    //            .ReturnsAsync(HttpStatusCode.OK);
-    //    }
-
-    //    [TestCase("", "Mexico", "McDonduls", "Tom Erics")]
-    //    public void CustomerController_CreateCustomer_BadRequest(string CustomerID, string Country, string CompanyName, string ContactName)
-    //    {
-    //        customerController.Setup(c => c.CreateCustomer(It.IsAny<Customer>()))
-    //            .ReturnsAsync(HttpStatusCode.BadRequest);
-    //    }
-
-    //    [TestCase("Mexico")]
-    //    public void CustomerController_GetCustomer_Success(string Country)
-    //    {
-    //        customerController.Setup(c => c.GetCustomer(It.IsAny<string>))
-
-
-    //    }
+        [SetUp]
+        public void SetUp()
+        {
+            northwindContext = new Mock<NorthwindContext>();
+            
+            customerProvider = new Mock<ICustomerProvider>();
+        }
 
         //[TestCase("Mexico")]
-        //public void CustomerController_UpdateCustomer_Success(string Country)
+        //public void CustomerController_GetCustomer_Success(string country)
         //{
-        //    customerController.Setup(c => c.GetCustomer(It.IsAny<>))
+        //    customerProvider.Setup(c => c.GetCustomer(It.IsAny<Customer>))
+        //        .ReturnAsync(HttpStatusCode.OK);
+
 
 
         //}
 
-        //[TestCase("Mexico")]
-        //public void CustomerController_DeleteCustomer_Success(string Country)
-        //{
-        //    customerController.Setup(c => c.GetCustomer(It.IsAny<>))
 
 
-        //}
+        [TestCase("Mexico", "McDonduls", "Tom Erics")]
+        public void CustomerController_CreateCustomer_Success(string Country, string CompanyName, string ContactName)
+        {
+            customerProvider.Setup(c => c.CreateCustomer(It.IsAny<Customer>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+        }
 
-    //}
+        [TestCase("Mexico", "McDonduls", "Tom Erics")]
+        public void CustomerController_CreateCustomer_BadRequest(string Country, string CompanyName, string ContactName)
+        {
+            customerProvider.Setup(c => c.CreateCustomer(It.IsAny<Customer>()))
+                .ReturnsAsync(HttpStatusCode.BadRequest);
+        }
+
+
+
+    }
 }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using StampinUp.Core.AspNetCore.WebHosting;
+using CustomerService.Providers;
 
 namespace CustomerService
 {
@@ -34,6 +35,7 @@ namespace CustomerService
             
 
             services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddSingleton<ICustomerProvider, CustomerProvider>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 

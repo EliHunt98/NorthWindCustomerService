@@ -10,98 +10,48 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using Newtonsoft.Json;
+using CustomerService.Providers;
 
 namespace CustomerService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    
 
-    public class CustomerController
+
+    public class CustomerController : ControllerBase
     {
-        private readonly NorthwindContext NorthwindContext;
-        public DbContextOptionsBuilder optionsBuilder { get; set; }
-        public DbSet<Customer> Customers { get; set; }
 
-        public CustomerController(NorthwindContext NorthwindContext)
+        private readonly ICustomerProvider customerProvider;
+
+        public CustomerController(ICustomerProvider customerProvider)
         {
-            this.NorthwindContext = NorthwindContext;
-            this.optionsBuilder = optionsBuilder;
-            this.Customers = Customers;
+            this.customerProvider = customerProvider;
         }
 
-
         [HttpGet("{Country}")]
-        public async Task<ActionResult<List<Customer>>> GetCustomer(string Country)
+        public async Task<List<Customer>> GetCustomer(string Country)
         {
 
-            IQueryable<Customer> custQuery =
-            from cust in NorthwindContext.Customers
-            where cust.Country == Country
-            select cust;
-
-
-            return custQuery.ToList();
+            return await customerProvider.GetCustomer(Country);
         }
 
         [HttpPost("")]
         public async Task<ActionResult<HttpStatusCode>> CreateCustomer([FromBody] Customer customer)
         {
-            
-            var customers = NorthwindContext.Set<Customer>();
-
-            Customer customerJson = new Customer();
-
-            customerJson.CustomerID = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.CustomerID;
-            customerJson.CompanyName = "Alder's";
-            customerJson.ContactName = "Alder";
-            customerJson.Country = "Mexico";
-            //customerJson.Address = "123";
-            
-            string output = JsonConvert.SerializeObject(customerJson);
-
-
-            Customer deserializedCustomer = JsonConvert.DeserializeObject<Customer>(output);
-
-            await customers.AddAsync(customerJson);
-
-            NorthwindContext.SaveChanges();
-
-            return HttpStatusCode.OK; 
-
-            
+            return await customerProvider.CreateCustomer(customer);
 
         }
 
         [HttpPut("{customerID}")]
         public async Task<ActionResult<HttpStatusCode>> UpdateCustomer([FromBody] Customer customer, string customerID)
         {
-            var customerToChange = (from cust in NorthwindContext.Customers
-                                    where customer.CustomerID == customerID
-                                    select customer).FirstOrDefault();
-
-            customerToChange.CompanyName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.CustomerID;
-            customerToChange.ContactName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.ContactName;
-            customerToChange.Country = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.Country;
-
-            NorthwindContext.Update(customerToChange);
-            NorthwindContext.SaveChanges();
-
-            return HttpStatusCode.OK;
+            return await customerProvider.UpdateCustomer(customer, customerID);
         }
 
         [HttpDelete("{customerID}")]
         public async Task<ActionResult<HttpStatusCode>> DeleteCustomer(string customerID)
         {
-            var customerToDelete = (from customer in NorthwindContext.Customers
-                                    where customer.CustomerID == customerID
-                                    select customer).FirstOrDefault();
-
-            NorthwindContext.Remove(customerToDelete);
-
-            NorthwindContext.SaveChanges();
-
-            return HttpStatusCode.OK;
+            return await customerProvider.DeleteCustomer(customerID);
         }
     }
 }
