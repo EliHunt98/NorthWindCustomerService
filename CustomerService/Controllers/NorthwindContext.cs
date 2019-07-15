@@ -14,10 +14,13 @@ namespace CustomerService
 
         
 
-        public NorthwindContext(DbContextOptions<NorthwindContext> options) : base(options) { }
+        public NorthwindContext(DbContextOptions<NorthwindContext> options) : base(options) {
+            
+        }
         public DbSet<Customer> Customers { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging(true);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

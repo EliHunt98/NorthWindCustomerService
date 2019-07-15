@@ -36,14 +36,14 @@ namespace CustomerService.Controllers
         }
 
         [HttpPost("")]
-        public async Task<ActionResult<HttpStatusCode>> CreateCustomer([FromBody] Customer customer)
+        public async Task<ActionResult<HttpStatusCode>> CreateCustomer(Customer customer)
         {
             return await customerProvider.CreateCustomer(customer);
 
         }
 
         [HttpPut("{customerID}")]
-        public async Task<ActionResult<HttpStatusCode>> UpdateCustomer([FromBody] Customer customer, string customerID)
+        public async Task<ActionResult<HttpStatusCode>> UpdateCustomer(Customer customer, string customerID)
         {
             return await customerProvider.UpdateCustomer(customer, customerID);
         }

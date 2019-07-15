@@ -14,15 +14,10 @@ namespace CustomerService.Providers
     {
 
         private readonly NorthwindContext NorthwindContext;
-        public DbContextOptionsBuilder optionsBuilder { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-
 
         public CustomerProvider(NorthwindContext NorthwindContext)
         {
             this.NorthwindContext = NorthwindContext;
-            this.optionsBuilder = optionsBuilder;
-            this.Customers = Customers;
         }
 
         public async Task<List<Customer>> GetCustomer(string Country)
@@ -49,7 +44,7 @@ namespace CustomerService.Providers
             string output = JsonConvert.SerializeObject(customerJson);
             Customer deserializedCustomer = JsonConvert.DeserializeObject<Customer>(output);
             await customers.AddAsync(customerJson);
-            NorthwindContext.SaveChanges();
+            NorthwindContext.SaveChanges(true);
 
             return HttpStatusCode.OK;
         }
@@ -57,16 +52,24 @@ namespace CustomerService.Providers
        
         public async Task<HttpStatusCode> UpdateCustomer(Customer customer, string customerID)
         {
+            /*
             var customerToChange = (from cust in NorthwindContext.Customers
                                     where customer.CustomerID == customerID
                                     select customer).FirstOrDefault();
+                                    */
 
-            customerToChange.CompanyName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.CustomerID;
+            var customerToChange = NorthwindContext.Customers.Where(c => c.CustomerID == customerID)
+                .AsNoTracking()
+                .FirstOrDefault();
+
+            customerToChange.CompanyName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.CompanyName;
             customerToChange.ContactName = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.ContactName;
             customerToChange.Country = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.Country;
+            customerToChange.Address = string.IsNullOrEmpty(customer.CustomerID) ? System.Guid.NewGuid().ToString().Substring(0, 5) : customer.Address;
+
 
             NorthwindContext.Update(customerToChange);
-            NorthwindContext.SaveChanges();
+            NorthwindContext.SaveChanges(true);
 
             return HttpStatusCode.OK;
         }

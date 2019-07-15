@@ -32,10 +32,16 @@ namespace CustomerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public override void ConfigureServices(IServiceCollection services)
         {
-            
 
-            services.AddDbContext<NorthwindContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+
+            services.AddDbContext<NorthwindContext>(options => 
+            {
+                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]);
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            }); 
+
             services.AddSingleton<ICustomerProvider, CustomerProvider>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 

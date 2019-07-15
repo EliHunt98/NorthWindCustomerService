@@ -10,14 +10,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StampinUp.Core.IntegrationTests.UnitTests
 {
-    [TestFixture, Category("CustomerUnitTests")]
+    [TestFixture, Category("UnitTests_CustomerController")]
     class CustomerControllerUnitTests
     {
         Mock<NorthwindContext> northwindContext;
-        Mock<Customer> customer;
+        
         Mock<ICustomerProvider> customerProvider;
 
         [SetUp]
@@ -28,15 +29,15 @@ namespace StampinUp.Core.IntegrationTests.UnitTests
             customerProvider = new Mock<ICustomerProvider>();
         }
 
-        //[TestCase("Mexico")]
-        //public void CustomerController_GetCustomer_Success(string country)
-        //{
-        //    customerProvider.Setup(c => c.GetCustomer(It.IsAny<Customer>))
-        //        .ReturnAsync(HttpStatusCode.OK);
+        [TestCase("Mexico")]
+        public void CustomerController_GetCustomer_Success(string country)
+        {
+            customerProvider.Setup(c => c.GetCustomer(It.IsAny<string>()))
+                .ReturnsAsync(new List<Customer>());
 
 
 
-        //}
+        }
 
 
 
@@ -54,6 +55,21 @@ namespace StampinUp.Core.IntegrationTests.UnitTests
                 .ReturnsAsync(HttpStatusCode.BadRequest);
         }
 
+        [TestCase("ALFKI")]
+        public void CustomerController_DeleteCustomer_Success(string CustomerID)
+        {
+            customerProvider.Setup(c => c.DeleteCustomer(It.IsAny<string>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+        }
+
+        [TestCase("ALFK")]
+        public void CustomerController_DeleteCustomer_BadRequest(string CustomerID)
+        {
+            customerProvider.Setup(c => c.DeleteCustomer(It.IsAny<string>()))
+                .ReturnsAsync(HttpStatusCode.BadRequest);
+        }
+
+        
 
 
     }
